@@ -16,23 +16,21 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     };
-
-    toastr["warning"]("My name is Inigo Montoya. You killed my father. Prepare to die!");
-    toastr.info('Are you the 6 fingered man?');
-
-    hideProgress();
+    $('#ddlCity').hide();
     $.ajax({
         url: "https://api.openaq.org/v1/countries",
         dataType: 'json',
         type: 'GET',
         success: function (response) {
-            debugger 
-            toastr.info(response);
+            $('#ddlCountry').empty();
+            $('#ddlCountry').append($('<option>').text('--Choose Country--').attr('value'));
+            $.each(response.results, function (i, item) {
+                $('#ddlCountry').append($('<option>').text(item.name).attr('value', item.code));
+            });
         },
         error: function (response) {
             toastr["error"](JSON.parse(response.responseText).message);
             console.log(response);
-            return false;
         },
         beforeSend: function () {
             showProgress();
@@ -41,4 +39,30 @@
             hideProgress();
         }
     });
+    $('#ddlCountry').on('change',
+        function() {
+            $.ajax({
+                url: "https://api.openaq.org/v1/cities?country="+this.value,
+                dataType: 'json',
+                type: 'GET',
+                success: function (response) {
+                    $('#ddlCity').empty();
+                    $('#ddlCity').append($('<option>').text('--Choose City--').attr('value'));
+                    $.each(response.results, function (i, item) {
+                        $('#ddlCity').append($('<option>').text(item.city + ' (' + item.locations +')').attr('value', item.code));
+                    });
+                    $('#ddlCity').show();
+                },
+                error: function (response) {
+                    toastr["error"](JSON.parse(response.responseText).message);
+                    console.log(response);
+                },
+                beforeSend: function () {
+                    showProgress();
+                },
+                complete: function () {
+                    hideProgress();
+                }
+            });
+        });
 });
