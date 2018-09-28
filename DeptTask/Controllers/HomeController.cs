@@ -14,9 +14,9 @@ namespace DeptTask.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly DeptTaskDBContext _context;
+        private readonly _DeptTaskDBContext _context;
 
-        public HomeController(DeptTaskDBContext context)
+        public HomeController(_DeptTaskDBContext context)
         {
             _context = context;
         }
@@ -85,7 +85,7 @@ namespace DeptTask.Controllers
                             {
                                 if (await _context.Country.FirstOrDefaultAsync(c => c.Code == result.code) == null)
                                 {
-                                    await _context.Country.AddAsync(new Country
+                                    await _context.Country.AddAsync(new _Country
                                     {
                                         Code = result.code,
                                         Name = result.name,
