@@ -2,6 +2,8 @@
     $('#city').hide();
     $('#table').hide();
     $('#locations').hide();
+    var d = new Date();
+    $('#dateStart').value = d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate();
 
     $('#tblData').DataTable({
         "processing": true,
@@ -13,6 +15,7 @@
         "info": true,
         "filter": false,
         "orderMulti": false,
+        //https://api.openaq.org/v1/measurements?location=MK0048A&parameter[]=pm10&parameter[]=pm25&order_by=date&sort=desc&limit=10000
         //"columns": [
         //    { "data": "GlobalItemId", "name": "GlobalItemId", "autoWidth": true },
         //    { "data": "GlobalItemName", "name": "GlobalItemName", "autoWidth": true },
@@ -42,7 +45,7 @@
 
 
     $.ajax({
-        url: "https://api.openaq.org/v1/countries",
+        url: "https://api.openaq.org/v1/countries?order_by=name",
         dataType: 'json',
         type: 'GET',
         success: function (response) {
@@ -63,10 +66,33 @@
             hideProgress();
         }
     });
+    $.ajax({
+        url: "https://api.openaq.org/v1/parameters",
+        dataType: 'json',
+        type: 'GET',
+        success: function (response) {
+            $('#ddlParameters').empty();
+            $('#ddlParameters').append("<option selected value='' >---Choose Parameters---</option>");
+            $.each(response.results, function (i, item) {
+                $('#ddlParameters').append($("<option></option>").val(item.id).html(item.name));
+            });
+        },
+        error: function (response) {
+            toastr["error"](JSON.parse(response.responseText).message);
+            console.log(response);
+        },
+        beforeSend: function () {
+            showProgress();
+        },
+        complete: function () {
+            hideProgress();
+        }
+    });
+
     $('#ddlCountry').on('change',
         function () {
             $.ajax({
-                url: "https://api.openaq.org/v1/cities?country=" + this.value,
+                url: "https://api.openaq.org/v1/cities?country=" + this.value + "&order_by[]=locations&order_by[]=city",
                 dataType: 'json',
                 type: 'GET',
                 success: function (response) {
@@ -100,12 +126,9 @@
                     $("#ddlLocations").append("<option selected value='' >---Choose Location---</option>");
                     $.each(response.results,
                         function (i, arr) {
-                            //$.each(i, response.results[i],
-                                //function (i, item) {
-                                    $('#ddlLocations').append($("<option></option>").val(arr.location).html(arr.location));
-                                //});
+                            $('#ddlLocations').append($("<option></option>").val(arr.location).html(arr.location));
                         });
-                    
+
                     $('#locations').show();
                 },
                 error: function (response) {
