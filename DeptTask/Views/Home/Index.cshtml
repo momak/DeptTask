@@ -2,23 +2,50 @@
     ViewData["Title"] = "Home Page";
 }
 
-
-
-<div class="row">
-    <div class="col-md-3">
-        <h2>Application uses</h2>
-
-        <select id="ddlCountry" class="form-control"></select>
-
-        <select id="ddlCity" class="form-control"></select>
-
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-4">
+                <h2>Options</h2>
+                <div id="country">
+                    <label>Country:</label>
+                    <select id="ddlCountry" class="form-control"></select>
+                </div>
+                <div id="city">
+                    <label>City:</label>
+                    <select id="ddlCity" class="form-control"></select>
+                </div>
+                <div id="locations">
+                    <label>Locations:</label>
+                    <select id="ddlLocations" class="form-control"></select>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-offset-1">
+                <div id="table">
+                    <table id="tblData">
+                        <thead>
+                            <tr>
+                                <th>Column 1</th>
+                                <th>Column 2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Row 1 Data 1</td>
+                                <td>Row 1 Data 2</td>
+                            </tr>
+                            <tr>
+                                <td>Row 2 Data 1</td>
+                                <td>Row 2 Data 2</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-
 </div>
-
 @section Scripts
     {
     <script src="~/PageScripts/Home/Home.js"></script>
-        
 }
-

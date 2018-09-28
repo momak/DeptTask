@@ -1,4 +1,27 @@
 ﻿$(document).ready(function () {
+    $('#city').hide();
+    $('#table').hide();
+    $('#locations').hide();
+
+    $('#tblData').DataTable({
+        "processing": true,
+        //"serverSide": true, // for process server side
+        "searching": false,
+        "searchDelay": 1000,
+        "stateSave": false,
+        "deferRender": true,
+        "info": true,
+        "filter": false,
+        "orderMulti": false,
+        //"columns": [
+        //    { "data": "GlobalItemId", "name": "GlobalItemId", "autoWidth": true },
+        //    { "data": "GlobalItemName", "name": "GlobalItemName", "autoWidth": true },
+        //    { "data": "ConfigId", "name": "ConfigId", "autoWidth": true },
+        //    { "data": "CompanyItemId", "name": "CompanyItemId", "autoWidth": true },
+        //    { "data": "CompanyItemName", "name": "CompanyItemName", "autoWidth": true }
+        //]
+    });
+
     toastr.options = {
         "closeButton": false,
         "debug": false,
@@ -16,7 +39,8 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     };
-    $('#ddlCity').hide();
+
+
     $.ajax({
         url: "https://api.openaq.org/v1/countries",
         dataType: 'json',
@@ -40,18 +64,18 @@
         }
     });
     $('#ddlCountry').on('change',
-        function() {
+        function () {
             $.ajax({
-                url: "https://api.openaq.org/v1/cities?country="+this.value,
+                url: "https://api.openaq.org/v1/cities?country=" + this.value,
                 dataType: 'json',
                 type: 'GET',
                 success: function (response) {
                     $('#ddlCity').empty();
-                    $('#ddlCity').append($('<option>').text('--Choose City--').attr('value'));
+                    $("#ddlCity").append("<option selected value='' >---Choose City---</option>");
                     $.each(response.results, function (i, item) {
-                        $('#ddlCity').append($('<option>').text(item.city + ' (' + item.locations +')').attr('value', item.code));
+                        $('#ddlCity').append($("<option></option>").val(item.city).html(item.city + ' (' + item.locations + ')'));
                     });
-                    $('#ddlCity').show();
+                    $('#city').show();
                 },
                 error: function (response) {
                     toastr["error"](JSON.parse(response.responseText).message);
@@ -65,4 +89,36 @@
                 }
             });
         });
+    $('#ddlCity').on('change',
+        function () {
+            $.ajax({
+                url: "https://api.openaq.org/v1/locations?city=" + this.value,
+                dataType: 'json',
+                type: 'GET',
+                success: function (response) {
+                    $('#ddlLocations').empty();
+                    $("#ddlLocations").append("<option selected value='' >---Choose Location---</option>");
+                    $.each(response.results,
+                        function (i, arr) {
+                            //$.each(i, response.results[i],
+                                //function (i, item) {
+                                    $('#ddlLocations').append($("<option></option>").val(arr.location).html(arr.location));
+                                //});
+                        });
+                    
+                    $('#locations').show();
+                },
+                error: function (response) {
+                    toastr["error"](JSON.parse(response.responseText).message);
+                    console.log(response);
+                },
+                beforeSend: function () {
+                    showProgress();
+                },
+                complete: function () {
+                    hideProgress();
+                }
+            });
+        });
+
 });
