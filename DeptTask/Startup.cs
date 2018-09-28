@@ -34,7 +34,7 @@ namespace DeptTask
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<IConfiguration>(Configuration);
-            services.AddDbContext<_DeptTaskDBContext>(options =>
+            services.AddDbContext<DeptTaskDBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
         }

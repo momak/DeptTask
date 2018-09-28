@@ -10,7 +10,7 @@ namespace DeptTask.Models
         {
         }
 
-        public DeptTaskDBContext(DbContextOptions<_DeptTaskDBContext> options, IConfiguration iConfiguration)
+        public DeptTaskDBContext(DbContextOptions<DeptTaskDBContext> options, IConfiguration iConfiguration)
             : base(options)
         {
             _iConfiguration = iConfiguration;
