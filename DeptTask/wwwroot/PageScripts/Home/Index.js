@@ -45,7 +45,7 @@
 
 
     $.ajax({
-        url: "api/DeptTask/Log?urlRequest=countries?order_by=name",//"https://api.openaq.org/v1/countries?order_by=name",
+        url: "api/DeptTask/Log?urlRequest=countries?order_by=name",
         dataType: 'json',
         type: 'GET',
         success: function (response) {
@@ -67,7 +67,7 @@
         }
     });
     $.ajax({
-        url: "https://api.openaq.org/v1/parameters",
+        url: "api/DeptTask/Log?urlRequest=parameters",
         dataType: 'json',
         type: 'GET',
         success: function (response) {
@@ -92,7 +92,7 @@
     $('#ddlCountry').on('change',
         function () {
             $.ajax({
-                url: "https://api.openaq.org/v1/cities?country=" + this.value + "&order_by[]=locations&order_by[]=city",
+                url: "api/DeptTask/Log?urlRequest=cities?country=" + this.value + "&order_by[]=locations&order_by[]=city",
                 dataType: 'json',
                 type: 'GET',
                 success: function (response) {
@@ -118,7 +118,7 @@
     $('#ddlCity').on('change',
         function () {
             $.ajax({
-                url: "https://api.openaq.org/v1/locations?city=" + this.value,
+                url: "api/DeptTask/Log?urlRequest=locations?city=" + this.value,
                 dataType: 'json',
                 type: 'GET',
                 success: function (response) {

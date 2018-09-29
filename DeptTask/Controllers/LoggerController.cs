@@ -39,22 +39,22 @@ namespace DeptTask.Controllers
         {
             ApiLogger apiLog = new ApiLogger();
             apiLog.Id = Guid.NewGuid();
-            apiLog.RequestUrl = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiBase")?.Value+ urlRequest;
+            apiLog.RequestUrl = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiBase")?.Value + urlRequest;
             apiLog.RequestDate = DateTime.Now;
-            
+
             using (_context)
             {
                 try
                 {
                     var dbResponse = _context.ApiLogger.Where(api =>
-                        api.RequestUrl == urlRequest && 
-                        api.ResponseDate <= DateTime.Now.AddMinutes(30))
-                        .OrderByDescending(api =>api.ResponseDate)
+                        api.RequestUrl == apiLog.RequestUrl &&
+                        api.ResponseDate >= DateTime.Now.AddMinutes(-60))
+                        .OrderByDescending(api => api.ResponseDate)
                         .FirstOrDefault();
 
-                    if (dbResponse != null) 
+                    if (dbResponse != null)
                     {
-                       return Ok(dbResponse.ResponseContent);
+                        return Ok(dbResponse.ResponseContent);
                     }
 
                     ApiCaller apiCaller = new ApiCaller();
