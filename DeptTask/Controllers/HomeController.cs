@@ -1,28 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using DeptTask.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using DeptTask.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace DeptTask.Controllers
 {
     public class HomeController : Controller
     {
         private readonly DeptTaskDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public HomeController(DeptTaskDBContext context)
+        public HomeController(DeptTaskDBContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
         {
+            
             return View();
         }
         public IActionResult Country()
@@ -54,32 +57,21 @@ namespace DeptTask.Controllers
         [HttpPost]
         public async Task<IActionResult> StoreCountries()
         {
-            string apiBase = "https://api.openaq.org/v1/";
-            string apiCountries = "countries";
+            string apiBase = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiBase")?.Value;
+            string apiCountry = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiCountries")?.Value;
 
-            using (var client = new HttpClient())
+            ApiCaller apiCall = new ApiCaller();
+            var response = await apiCall.CallApi(apiBase, apiCountry);
+
+            if (!string.IsNullOrEmpty(response))
             {
-                //Passing service base url  
-                client.BaseAddress = new Uri(apiBase);
-
-                client.DefaultRequestHeaders.Clear();
-                //Define request data format  
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                HttpResponseMessage Res = await client.GetAsync(apiCountries);
-
-                //Checking the response is successful or not which is sent using HttpClient  
-                if (Res.IsSuccessStatusCode)
+                //Deserializing the response recieved from web api and storing  
+                CountryJson countryJson = JsonConvert.DeserializeObject<CountryJson>(response);
+                if (countryJson.results.Any())
                 {
-                    //Storing the response details recieved from web api   
-                    var jsonResult = Res.Content.ReadAsStringAsync().Result;
-
-                    //Deserializing the response recieved from web api and storing into the Employee list  
-                    CountryJson countryJson = JsonConvert.DeserializeObject<CountryJson>(jsonResult);
-
-                    if (countryJson.results.Any())
+                    using (_context)
                     {
-                        using (_context)
+                        try
                         {
                             foreach (CountryResponse result in countryJson.results)
                             {
@@ -98,14 +90,65 @@ namespace DeptTask.Controllers
 
                             await _context.SaveChangesAsync();
                         }
+                        catch (Exception e)
+                        {//log exception
 
+
+                        }
                     }
-
                 }
             }
 
             return View("Country");
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> StoreCities()
+        {
+            string apiBase = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiBase")?.Value;
+            string apiCity = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiCities")?.Value;
+
+            apiCity += "?limit=10000";
+            
+            ApiCaller apiCall = new ApiCaller();
+            var response = await apiCall.CallApi(apiBase, apiCity);
+
+            if (!string.IsNullOrEmpty(response))
+            {
+                //Deserializing the response recieved from web api and storing  
+                CityJson cityJson = JsonConvert.DeserializeObject<CityJson>(response);
+                if (cityJson.results.Any())
+                {
+                    using (_context)
+                    {
+                        try
+                        {
+                            foreach (CityResponse result in cityJson.results)
+                            {
+                                if (await _context.City.FirstOrDefaultAsync(c => c.CountryCode == result.country && c.City1==result.city) == null)
+                                {
+                                    await _context.City.AddAsync(new City
+                                    {
+                                        City1 = result.city,
+                                        CountryCode = result.country,
+                                        Count = result.count,
+                                        Locations = result.locations
+                                    });
+                                }
+                            }
+
+                            await _context.SaveChangesAsync();
+                        }
+                        catch (Exception e)
+                        {//log exception
+
+
+                        }
+                    }
+                }
+            }
+
+            return View("City");
         }
     }
 }

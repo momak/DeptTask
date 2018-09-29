@@ -50,9 +50,9 @@
         type: 'GET',
         success: function (response) {
             $('#ddlCountry').empty();
-            $('#ddlCountry').append($('<option>').text('--Choose Country--').attr('value'));
+            $('#ddlCountry').append("<option selected value='' >---Choose Country---</option>");
             $.each(response.results, function (i, item) {
-                $('#ddlCountry').append($('<option>').text(item.name).attr('value', item.code));
+                $('#ddlCountry').append($('<option></option>').val(item.code).html(item.name));
             });
         },
         error: function (response) {
@@ -97,7 +97,7 @@
                 type: 'GET',
                 success: function (response) {
                     $('#ddlCity').empty();
-                    $("#ddlCity").append("<option selected value='' >---Choose City---</option>");
+                    $("#ddlCity").append("<option selected value='' >---All Cities---</option>");
                     $.each(response.results, function (i, item) {
                         $('#ddlCity').append($("<option></option>").val(item.city).html(item.city + ' (' + item.locations + ')'));
                     });

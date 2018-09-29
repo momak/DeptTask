@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 
 namespace DeptTask.Models
@@ -16,6 +18,7 @@ namespace DeptTask.Models
             _iConfiguration = iConfiguration;
         }
 
+        public virtual DbSet<ApiLogger> ApiLogger { get; set; }
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<Country> Country { get; set; }
 
@@ -29,15 +32,31 @@ namespace DeptTask.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ApiLogger>(entity =>
+            {
+                entity.ToTable("apiLogger");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.RequestDate).HasColumnType("datetime");
+
+                entity.Property(e => e.RequestUrl).HasMaxLength(500);
+
+                entity.Property(e => e.ResponseDate).HasColumnType("datetime");
+            });
+
             modelBuilder.Entity<City>(entity =>
             {
-                entity.HasKey(e => new { e.City1, e.CountryCode });
+                entity.HasKey(e => e.IdCity);
 
                 entity.Property(e => e.City1)
+                    .IsRequired()
                     .HasColumnName("City")
                     .HasMaxLength(400);
 
-                entity.Property(e => e.CountryCode).HasMaxLength(2);
+                entity.Property(e => e.CountryCode)
+                    .IsRequired()
+                    .HasMaxLength(2);
 
                 entity.HasOne(d => d.CountryCodeNavigation)
                     .WithMany(p => p.City)

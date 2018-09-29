@@ -5,6 +5,7 @@ namespace DeptTask.Models
 {
     public partial class City
     {
+        public int IdCity { get; set; }
         public string City1 { get; set; }
         public string CountryCode { get; set; }
         public int? Count { get; set; }
