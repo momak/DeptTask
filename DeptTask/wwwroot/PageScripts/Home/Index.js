@@ -45,7 +45,7 @@
 
 
     $.ajax({
-        url: "https://api.openaq.org/v1/countries?order_by=name",
+        url: "api/DeptTask/Log?urlRequest=countries?order_by=name",//"https://api.openaq.org/v1/countries?order_by=name",
         dataType: 'json',
         type: 'GET',
         success: function (response) {

@@ -7,6 +7,7 @@ using DeptTask.Helpers;
 using DeptTask.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 
 namespace DeptTask.Controllers
@@ -32,11 +33,13 @@ namespace DeptTask.Controllers
         }
 
         // GET: api/DeptTask/5
-        [HttpGet("{urlRequest}", Name = "Get")]
+        [HttpGet]
+        [Route("Log")]
         public async Task<IActionResult> GetLog(string urlRequest)
         {
             ApiLogger apiLog = new ApiLogger();
-            apiLog.RequestUrl = urlRequest;
+            apiLog.Id = Guid.NewGuid();
+            apiLog.RequestUrl = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiBase")?.Value+ urlRequest;
             apiLog.RequestDate = DateTime.Now;
             
             using (_context)
@@ -59,6 +62,7 @@ namespace DeptTask.Controllers
                     apiLog.ResponseDate = DateTime.Now;
 
                     await _context.ApiLogger.AddAsync(apiLog);
+                    await _context.SaveChangesAsync();
                 }
                 catch (Exception e)
                 {
@@ -74,6 +78,7 @@ namespace DeptTask.Controllers
         public async Task<IActionResult> RequestApiData([FromBody] string urlRequest)
         {
             ApiLogger apiLog = new ApiLogger();
+            apiLog.Id = Guid.NewGuid();
             apiLog.RequestUrl = urlRequest;
             apiLog.RequestDate = DateTime.Now;
 
@@ -87,6 +92,7 @@ namespace DeptTask.Controllers
                 try
                 {
                     await _context.ApiLogger.AddAsync(apiLog);
+                    await _context.SaveChangesAsync();
                 }
                 catch (Exception e)
                 {
@@ -103,6 +109,7 @@ namespace DeptTask.Controllers
         public async Task<IActionResult> LogApi([FromBody] string urlRequest)
         {
             ApiLogger apiLog = new ApiLogger();
+            apiLog.Id = Guid.NewGuid();
             apiLog.RequestUrl = urlRequest;
             apiLog.RequestDate = DateTime.Now;
 
@@ -116,17 +123,14 @@ namespace DeptTask.Controllers
                 try
                 {
                     await _context.ApiLogger.AddAsync(apiLog);
+                    await _context.SaveChangesAsync();
                 }
                 catch (Exception e)
                 {
                     return BadRequest(e.Message);
                 }
             }
-
             return Ok();
-
         }
-
-        
     }
 }
