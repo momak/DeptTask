@@ -26,28 +26,23 @@ namespace DeptTask.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.url = _apiConfig.Value.apiBase;
+            ViewBag.serviceApi = _apiConfig.Value.apiBase;
+            ViewBag.loggerApi = _apiConfig.Value.apiLocal;
             return View();
         }
         public IActionResult Country()
         {
+            ViewBag.serviceApi = _apiConfig.Value.apiBase;
+            ViewBag.loggerApi = _apiConfig.Value.apiLocal;
             return View();
         }
 
         public IActionResult City()
         {
-            ViewData["Message"] = "Your application description page.";
-
+            ViewBag.serviceApi = _apiConfig.Value.apiBase;
+            ViewBag.loggerApi = _apiConfig.Value.apiLocal;
             return View();
         }
-
-        public IActionResult Locations()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

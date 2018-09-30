@@ -1,4 +1,7 @@
 ﻿$(document).ready(function () {
+    var urlService = $('#urlService').val();
+    var urlLocal = "/"+$('#urlLocal').val();
+
     $('#tblCountry').DataTable({
         "processing": true,
         "destroy": true,
@@ -10,7 +13,7 @@
         "filter": true,
         "orderMulti": true,
         "ajax": {
-            "url": "https://api.openaq.org/v1/countries",
+            "url": urlLocal +"?urlRequest=countries",
             "dataSrc": "results"
         },
         "columns": [
@@ -27,7 +30,5 @@
             { data: "locations" },
             { data: "count" }
         ]
-        //https://api.openaq.org/v1/measurements?location=MK0048A&parameter[]=pm10&parameter[]=pm25&order_by=date&sort=desc&limit=10000
-       
     });
 });

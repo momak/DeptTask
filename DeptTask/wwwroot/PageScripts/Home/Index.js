@@ -2,33 +2,48 @@
     $('#city').hide();
     $('#table').hide();
     $('#locations').hide();
-    var d = new Date();
-    $('#dateStart').value = d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate();
+    
+    var urlService = $('#urlService').val();
+    var urlLocal = $('#urlLocal').val();
 
     $("#btnGet").click(function (e) {
         e.preventDefault();
 
-        var urlCall = "api/DeptTask/Log?urlRequest=measurements?"; //"https://api.openaq.org/v1/measurements?";
+        var urlPath = urlLocal + "?urlRequest=measurements?";
 
         if ($('#ddlCountry').val() !== "")
-            urlCall += "country=" + $('#ddlCountry').val();
+            urlPath += "country=" + $('#ddlCountry').val();
 
         if (($('#ddlCity').val() !== "") && ($('#ddlCity').val() !== null))
-            urlCall += "%26city=" + $('#ddlCity').val();
+            urlPath += "%26city=" + $('#ddlCity').val();
 
         if (($('#ddlLocations').val() !== "") && ($('#ddlLocations').val() !== null))
-            urlCall += "%26location=" + $('#ddlLocations').val();
+            urlPath += "%26location=" + $('#ddlLocations').val();
+
+
 
         if ($('#ddlParameters').val() !== "")
-            urlCall += "%26parameter[]=" + $('#ddlParameters').val();
+            urlPath += "%26parameter[]=" + $('#ddlParameters').val();
 
         if ($('#dateStart').val() !== "")
-            urlCall += "%26date_from=" + $('#dateStart').val();
+            urlPath += "%26date_from=" + $('#dateStart').val();
 
         if ($('#dateEnd').val() !== "")
-            urlCall += "%26date_to=" + $('#dateEnd').val();
+            urlPath += "%26date_to=" + $('#dateEnd').val();
 
-        urlCall += "%26order_by=date%26sort=desc%26limit=10000";
+
+
+        if ($('#page').val() !== "")
+            urlPath += "%26page=" + $('#page').val();
+
+        if ($('#limit').val() !== "")
+            urlPath += "%26limit=" + $('#limit').val();
+
+        if ($('#ddlOrder').val() !== "")
+            urlPath += "%26order_by=" + $('#ddlOrder').val();
+
+        if ($('#ddlDirection').val() !== "")
+            urlPath += "%26sort=" + $('#ddlDirection').val();
 
 
         $('#tblData').DataTable({
@@ -42,7 +57,7 @@
             "filter": true,
             "orderMulti": false,
             "ajax": {
-                "url": urlCall,
+                "url": urlPath,
                 "dataSrc": "results"
             },
             "columns": [
@@ -85,12 +100,12 @@
 
 
     $.ajax({
-        url: "api/DeptTask/Log?urlRequest=countries?order_by=name",
+        url: urlLocal + "?urlRequest=countries?order_by=name",
         dataType: 'json',
         type: 'GET',
         success: function (response) {
             $('#ddlCountry').empty();
-            $('#ddlCountry').append("<option selected value='' >---Choose Country---</option>");
+            $('#ddlCountry').append("<option selected value='' >---All Countries---</option>");
             $.each(response.results, function (i, item) {
                 $('#ddlCountry').append($('<option></option>').val(item.code).html(item.name));
             });
@@ -107,12 +122,12 @@
         }
     });
     $.ajax({
-        url: "api/DeptTask/Log?urlRequest=parameters",
+        url: urlLocal + "?urlRequest=parameters",
         dataType: 'json',
         type: 'GET',
         success: function (response) {
             $('#ddlParameters').empty();
-            $('#ddlParameters').append("<option selected value='' >---Choose Parameters---</option>");
+            $('#ddlParameters').append("<option selected value='' >---All Parameters---</option>");
             $.each(response.results, function (i, item) {
                 $('#ddlParameters').append($("<option></option>").val(item.id).html(item.name));
             });
@@ -132,7 +147,7 @@
     $('#ddlCountry').on('change',
         function () {
             $.ajax({
-                url: "api/DeptTask/Log?urlRequest=cities?country=" + this.value + "&order_by[]=locations&order_by[]=city",
+                url: urlLocal + "?urlRequest=cities?country=" + this.value + "%26order_by[]=locations%26order_by[]=city",
                 dataType: 'json',
                 type: 'GET',
                 success: function (response) {
@@ -158,12 +173,12 @@
     $('#ddlCity').on('change',
         function () {
             $.ajax({
-                url: "api/DeptTask/Log?urlRequest=locations?city=" + this.value,
+                url: urlLocal + "?urlRequest=locations?city=" + this.value,
                 dataType: 'json',
                 type: 'GET',
                 success: function (response) {
                     $('#ddlLocations').empty();
-                    $("#ddlLocations").append("<option selected value='' >---Choose Location---</option>");
+                    $("#ddlLocations").append("<option selected value='' >---All Locations---</option>");
                     $.each(response.results,
                         function (i, arr) {
                             $('#ddlLocations').append($("<option></option>").val(arr.location).html(arr.location));
