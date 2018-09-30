@@ -78,27 +78,6 @@
         $('#table').show();
     });
 
-
-
-    toastr.options = {
-        "closeButton": false,
-        "debug": false,
-        "newestOnTop": false,
-        "progressBar": true,
-        "positionClass": "toast-top-full-width",
-        "preventDuplicates": false,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "5000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    };
-
-
     $.ajax({
         url: urlLocal + "?urlRequest=countries?order_by=name",
         dataType: 'json',
@@ -111,7 +90,7 @@
             });
         },
         error: function (response) {
-            toastr["error"](JSON.parse(response.responseText).message);
+            toastr["error"](response.responseText);
             console.log(response);
         },
         beforeSend: function () {
@@ -133,7 +112,7 @@
             });
         },
         error: function (response) {
-            toastr["error"](JSON.parse(response.responseText).message);
+            toastr["error"](response.responseText);
             console.log(response);
         },
         beforeSend: function () {
@@ -159,7 +138,7 @@
                     $('#city').show();
                 },
                 error: function (response) {
-                    toastr["error"](JSON.parse(response.responseText).message);
+                    toastr["error"](response.responseText);
                     console.log(response);
                 },
                 beforeSend: function () {
@@ -187,7 +166,7 @@
                     $('#locations').show();
                 },
                 error: function (response) {
-                    toastr["error"](JSON.parse(response.responseText).message);
+                    toastr["error"](response.responseText);
                     console.log(response);
                 },
                 beforeSend: function () {

@@ -31,4 +31,31 @@
             { data: "count" }
         ]
     });
+
+    $("#btnCountries").click(function (e) {
+
+        $.ajax({
+            url: "/Home/StoreCountries",
+            dataType: 'json',
+            type: 'POST',
+            success: function (response) {
+                if (response) {
+                    toastr["success"]("Data Successfully synchronized");
+                    console.log(response);
+                }
+            },
+            error: function (response) {
+                toastr["error"](response.responseText);
+                console.log(response);
+            },
+            beforeSend: function () {
+                showProgress();
+            },
+            complete: function () {
+                hideProgress();
+            }
+        });
+
+        e.preventDefault();
+    });
 });

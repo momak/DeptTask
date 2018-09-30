@@ -44,7 +44,7 @@
             });
         },
         error: function (response) {
-            toastr["error"](JSON.parse(response.responseText).message);
+            toastr["error"](response.responseText);
             console.log(response);
         },
         beforeSend: function () {
@@ -99,7 +99,6 @@
 
     $("#btnShow").click(function (e) {
         e.preventDefault();
-        debugger
         var urlPath = urlLocal + "?urlRequest=cities?";
 
         if ($('#ddlCountry').val() !== "")
@@ -142,5 +141,33 @@
             ]
         });
         $('#table').show();
+    });
+
+    $("#btnCities").click(function (e) {
+        $.ajax({
+            url: "/Home/StoreCities",
+            dataType: 'json',
+            type: 'POST',
+            success: function (response) {
+                debugger 
+                if (response) {
+                    toastr["success"]("Data Successfully synchronized");
+                    console.log(response);
+                }
+            },
+            error: function (response) {
+                debugger 
+                toastr["error"](response.responseText);
+                console.log(response);
+            },
+            beforeSend: function () {
+                showProgress();
+            },
+            complete: function () {
+                hideProgress();
+            }
+        });
+
+        e.preventDefault();
     });
 });

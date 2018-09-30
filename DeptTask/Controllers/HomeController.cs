@@ -50,6 +50,10 @@ namespace DeptTask.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        /// <summary>
+        /// External not Logged Api Call to get countries available and store them in local database (diferential). 
+        /// </summary>
+        /// <returns>Status of the operation</returns>
         [HttpPost]
         public async Task<IActionResult> StoreCountries()
         {
@@ -88,22 +92,28 @@ namespace DeptTask.Controllers
                         }
                         catch (Exception e)
                         {//log exception
-
-
+                            return BadRequest(e.Message);
                         }
                     }
                 }
             }
 
-            return View("Country");
+            return Ok(true);
         }
 
+        /// <summary>
+        /// External not Logged Api Call to get cities available and store them in local database (diferential). 
+        /// </summary>
+        /// <returns>Status of the operation</returns>
         [HttpPost]
         public async Task<IActionResult> StoreCities()
         {
             string apiBase = _apiConfig.Value.apiBase;
             string apiCity = _apiConfig.Value.apiCities;
 
+            //there are under 10,000 cities in the DB.
+            //this is the max records per request
+            //it should be implemented as a paging with multuple calls to api
             apiCity += "?limit=10000";
             
             ApiCaller apiCall = new ApiCaller();
@@ -137,14 +147,12 @@ namespace DeptTask.Controllers
                         }
                         catch (Exception e)
                         {//log exception
-
-
+                           return BadRequest(e.Message);
                         }
                     }
                 }
             }
-
-            return View("City");
+            return Ok(true);
         }
     }
 }
