@@ -1,6 +1,7 @@
 ﻿$(document).ready(function () {
     $('#tblCountry').DataTable({
         "processing": true,
+        "destroy": true,
         "searching": true,
         "searchDelay": 1000,
         "stateSave": false,

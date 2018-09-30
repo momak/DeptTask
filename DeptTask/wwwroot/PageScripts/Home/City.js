@@ -27,8 +27,6 @@
             { data: "count" },
             { data: "locations" }
         ]
-        //https://api.openaq.org/v1/measurements?location=MK0048A&parameter[]=pm10&parameter[]=pm25&order_by=date&sort=desc&limit=10000
-
     });
 
     $.ajax({

@@ -28,10 +28,10 @@ namespace DeptTask.Helpers
                 if (response.IsSuccessStatusCode)
                 {
                     //Storing the response details recieved from web api   
-                    var jsonResult =response.Content.ReadAsStringAsync().Result;
+                    var jsonResult = response.Content.ReadAsStringAsync().Result;
 
                     return jsonResult;
-                    
+
                 }
 
                 return String.Empty;
@@ -42,9 +42,7 @@ namespace DeptTask.Helpers
         {
             using (var client = new HttpClient())
             {
-                //Passing service base url  
-                //client.BaseAddress = new Uri(apiBaseUrl);
-
+              
                 client.DefaultRequestHeaders.Clear();
                 //Define request data format  
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

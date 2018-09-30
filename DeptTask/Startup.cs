@@ -1,4 +1,5 @@
-﻿using DeptTask.Models;
+﻿using DeptTask.Helpers;
+using DeptTask.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +32,7 @@ namespace DeptTask
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<IConfiguration>(Configuration);
+            services.Configure<ApiConfig>(Configuration.GetSection("AppSettings"));
             services.AddDbContext<DeptTaskDBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 

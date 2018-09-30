@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AspNetCore;
 using DeptTask.Helpers;
 using DeptTask.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace DeptTask.Controllers
 {
@@ -17,12 +14,12 @@ namespace DeptTask.Controllers
     public class LoggerController : ControllerBase
     {
         private readonly DeptTaskDBContext _context;
-        private readonly IConfiguration _configuration;
+        private readonly IOptions<ApiConfig> _apiConfig;
 
-        public LoggerController(DeptTaskDBContext context, IConfiguration configuration)
+        public LoggerController(DeptTaskDBContext context, IOptions<ApiConfig> apiConfig)
         {
             _context = context;
-            _configuration = configuration;
+            _apiConfig = apiConfig;
         }
 
         // GET: api/DeptTask
@@ -39,7 +36,7 @@ namespace DeptTask.Controllers
         {
             ApiLogger apiLog = new ApiLogger();
             apiLog.Id = Guid.NewGuid();
-            apiLog.RequestUrl = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiBase")?.Value + urlRequest;
+            apiLog.RequestUrl = _apiConfig.Value.apiBase + urlRequest;
             apiLog.RequestDate = DateTime.Now;
 
             using (_context)

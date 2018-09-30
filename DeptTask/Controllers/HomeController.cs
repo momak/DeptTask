@@ -9,23 +9,24 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Linq;
+using Microsoft.Extensions.Options;
 
 namespace DeptTask.Controllers
 {
     public class HomeController : Controller
     {
         private readonly DeptTaskDBContext _context;
-        private readonly IConfiguration _configuration;
+        private readonly IOptions<ApiConfig> _apiConfig;
 
-        public HomeController(DeptTaskDBContext context, IConfiguration configuration)
+        public HomeController(DeptTaskDBContext context, IOptions<ApiConfig> apiConfig)
         {
             _context = context;
-            _configuration = configuration;
+            _apiConfig = apiConfig;
         }
 
         public IActionResult Index()
         {
-            
+            ViewBag.url = _apiConfig.Value.apiBase;
             return View();
         }
         public IActionResult Country()
@@ -57,8 +58,8 @@ namespace DeptTask.Controllers
         [HttpPost]
         public async Task<IActionResult> StoreCountries()
         {
-            string apiBase = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiBase")?.Value;
-            string apiCountry = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiCountries")?.Value;
+            string apiBase = _apiConfig.Value.apiBase;
+            string apiCountry = _apiConfig.Value.apiCountries;
 
             ApiCaller apiCall = new ApiCaller();
             var response = await apiCall.CallApi(apiBase, apiCountry);
@@ -105,8 +106,8 @@ namespace DeptTask.Controllers
         [HttpPost]
         public async Task<IActionResult> StoreCities()
         {
-            string apiBase = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiBase")?.Value;
-            string apiCity = _configuration.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "apiCities")?.Value;
+            string apiBase = _apiConfig.Value.apiBase;
+            string apiCity = _apiConfig.Value.apiCities;
 
             apiCity += "?limit=10000";
             
