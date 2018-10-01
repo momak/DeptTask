@@ -79,7 +79,13 @@
                 "orderMulti": true,
                 "ajax": {
                     "url": url,
-                    "dataSrc": "results"
+                    "dataSrc": "results",
+                    "error": function (xhr, status, error) {
+                        toastr["error"](xhr.responseText);
+                        console.log(xhr.responseText);
+                        $("#tblCity_processing").css("visibility", "hidden");
+                        return true;
+                    }
                 },
                 "columns": [
                     { data: "city" },
@@ -124,7 +130,13 @@
             "orderMulti": false,
             "ajax": {
                 "url": urlPath,
-                "dataSrc": "results"
+                "dataSrc": "results",
+                "error": function (xhr, status, error) {
+                    toastr["error"](xhr.responseText);
+                    console.log(xhr.responseText);
+                    $("#tblCity_processing").css("visibility", "hidden");
+                    return true;
+                }
             },
             "columns": [
                 { data: "city" },

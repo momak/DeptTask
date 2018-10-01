@@ -14,7 +14,13 @@
         "orderMulti": true,
         "ajax": {
             "url": urlLocal +"?urlRequest=countries",
-            "dataSrc": "results"
+            "dataSrc": "results",
+            "error": function (xhr, status, error) {
+                toastr["error"](xhr.responseText);
+                console.log(xhr.responseText);
+                $("#tblCountry_processing").css("visibility", "hidden");
+                return true;
+            }
         },
         "columns": [
             { data: "name" },
